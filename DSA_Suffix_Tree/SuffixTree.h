@@ -16,6 +16,7 @@ struct Node
         ch.insert(ch.end(), children);
     }
 };
+
 class SuffixTree 
 {
 public:
