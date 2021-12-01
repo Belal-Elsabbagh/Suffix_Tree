@@ -4,5 +4,5 @@ using namespace std;
 
 int main()
 {
-    SuffixTree("bbbbb$").visualize();
+    SuffixTree("Belal$").visualize();
 }

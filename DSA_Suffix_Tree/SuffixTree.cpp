@@ -2,7 +2,7 @@
 
 SuffixTree::SuffixTree(const string& str) 
 {
-    nodes.push_back(Node{});
+    nodes.push_back(Node());
     for (size_t i = 0; i < str.length(); i++) 
     {
         addSuffix(str.substr(i));
@@ -48,11 +48,13 @@ void SuffixTree::addSuffix(const string& suf)
 {
     int n = 0;
     size_t i = 0;
+
     while (i < suf.length())
     {
         char b = suf[i];
         int x2 = 0;
         int n2;
+
         while (true)
         {
             auto children = nodes[n].ch;
@@ -65,7 +67,8 @@ void SuffixTree::addSuffix(const string& suf)
                 return;
             }
             n2 = children[x2];
-            if (nodes[n2].sub[0] == b) {
+            if (nodes[n2].sub[0] == b) 
+            {
                 break;
             }
             x2++;
