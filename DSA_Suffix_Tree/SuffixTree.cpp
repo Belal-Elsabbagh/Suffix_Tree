@@ -65,11 +65,12 @@ void SuffixTree::addSuffix(const string& suf)
                 
                 n2 = nodes.size(); // sets node index to current number of nodes
 
-                nodes.push_back(Node(suf.substr(i), {})); // add node with a substring of current suffix
+                nodes.push_back(Node(suf.substr(i), {})); // add a new node with 1. current suffix
+                                                          //                     2. last character of the current suffix
 
                 nodes[n].childrenIndexes.push_back(n2); // add index of child node to the current node
-                
-                return; // returns to constructor to add the next suffix (if there's any)
+
+                return; // returns to SuffixTree constructor to add the next suffix (if there's any)
             }
 
             n2 = children[x2];
@@ -77,7 +78,7 @@ void SuffixTree::addSuffix(const string& suf)
             if (nodes[n2].substring[0] == b) // if the first character of the substring in the node is 
                                              // the same as the current character
             {
-                break; // breaks the loop to process the new substring
+                break; // breaks the loop to process the new node
             }
             x2++;
         }
