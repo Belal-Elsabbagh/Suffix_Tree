@@ -1,54 +1,43 @@
 #include <iostream>
 #include "SuffixTrie.h"
-
 using namespace std;
 
-/*
- *  output each node info to check correctness
- */
-void output(SuffixNode* n, string last = "")
+void output_suffix(SuffixNode* longest); //output all the suffix via the deepest node
+void test_substring(SuffixTrie* trie, string s, string q);
+void test_suffix(SuffixTrie* trie, string s, string q);
+void test_occurrence(SuffixTrie* trie, string s, string q);
+void test_longest_repeat(SuffixTrie* trie, string s);
+void test_lexico_first_suffix(SuffixTrie* trie, string s);
+
+int main(int argc, char* argv[])
 {
-    map<string, SuffixNode*> childrenMap = n->get_children();
-    string children = "";
+    string s;
+    string q;
 
-    for (std::map<string, SuffixNode*>::iterator iter = childrenMap.begin(); iter != childrenMap.end(); ++iter) 
-    {
-        string s = iter->first;
-        children += s + " ";
-    }
+    cout << "Enter string: "; cin >> s;
 
-    string parent = n->get_suffix_link() ? last : "root";
-    cout << parent << " in " << n->get_path() 
-         << "\thas child: " << children 
-         << "\tsuffix link: ";
-    if (parent != "root")
-        cout << n->get_suffix_link()->get_path() << endl;
-    else
-        cout << "NONE\n";
+    SuffixTrie* trie = new SuffixTrie();
+    trie->build_suffix_trie(s + TERMINAL);
 
-    for (std::map<string, SuffixNode*>::iterator iter = childrenMap.begin(); iter != childrenMap.end(); ++iter) {
-        string s = iter->first;
-        SuffixNode* sn = iter->second;
-        output(sn, s);
-    }
+    SuffixNode* root = trie->get_trie_root();
+    SuffixNode* longest = trie->get_deepest_leaf();
+
+    cout << "\nprint trie stucture\n";
+    trie->displayTree(cout);
+    cout << "\nprint suffix link\n";
+    trie->displaySuffix(cout);
+
+    cout << "\nEnter another string: "; cin >> q;
+
+    // test basic applications
+    test_substring(trie, s, q);
+    test_suffix(trie, s, q);
+    test_occurrence(trie, s, q);
+    test_longest_repeat(trie, s);
+    test_lexico_first_suffix(trie, s);
 }
 
-/*
- *  output all the suffix via
- *  the deepest node
- */
-void output_suffix(SuffixNode* longest)
-{
-    while (longest) 
-    {
-        cout << longest->get_path() << endl;
-        longest = longest->get_suffix_link();
-    }
-}
-
-/*
- *  test basic applications
- */
+/***** test basic applications *****/
 void test_substring(SuffixTrie* trie, string s, string q)
 {
     if (trie->has_substring(q))
@@ -83,30 +72,4 @@ void test_lexico_first_suffix(SuffixTrie* trie, string s)
 {
     string lexico_1 = trie->lexico_first_suffix();
     cout << lexico_1 << " is the first suffix of " << s << " by alphabetical order\n";
-}
-
-int main(int argc, char* argv[])
-{
-    string s;
-    string q;
-
-    cout << "Enter string: "; cin >> s;
-
-    SuffixTrie* trie = new SuffixTrie();
-    trie->build_suffix_trie(s + TERMINAL);
-
-    SuffixNode* root = trie->get_trie_root();
-    SuffixNode* longest = trie->get_deepest_leaf();
-
-    cout << "print trie stucture\n";
-    output(root);
-    cout << "print suffix link\n";
-    output_suffix(longest);
-
-    // test basic applications
-    test_substring(trie, s, q);
-    test_suffix(trie, s, q);
-    test_occurrence(trie, s, q);
-    test_longest_repeat(trie, s);
-    test_lexico_first_suffix(trie, s);
 }

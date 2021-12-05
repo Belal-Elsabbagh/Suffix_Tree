@@ -141,10 +141,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DSA_Suffix_Tree.cpp" />
-    <ClCompile Include="SuffixTree.cpp" />
+    <ClCompile Include="SuffixNode.cpp" />
+    <ClCompile Include="SuffixTrie.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SuffixTree.h" />
+    <ClInclude Include="SuffixNode.h" />
+    <ClInclude Include="SuffixTrie.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
