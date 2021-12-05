@@ -2,8 +2,8 @@
 #include <functional>
 
 /*
-*  Followings are basic applicaitons of suffix trie
-*/
+ *  Followings are basic applicaitons of suffix trie
+ */
 
 
 /*
@@ -19,10 +19,60 @@ SuffixTrie::SuffixTrie()
     this->longest = new SuffixNode(this->root);
 }
 
+SuffixTrie::SuffixTrie(string s)
+{
+    build_suffix_trie(s + TERMINAL);
+}
+
+SuffixTrie::SuffixTrie(const SuffixTrie& original)
+{
+    //this->build_suffix_trie(original.longest->get_path());
+}
+
+void SuffixTrie::DestroyRecursive(SuffixNode* node)
+{
+    map<string, SuffixNode*> m = node->get_children();
+    if (node != nullptr)
+    {
+        if (m.empty())
+        {
+            // delete the leaf node
+            delete(node);
+            return;
+        }
+        
+        std::map<string, SuffixNode*>::iterator iter;
+        for (iter = m.begin(); iter != m.end(); iter++)
+        {
+            DestroyRecursive(iter->second);
+        }
+    }
+}
+
 SuffixTrie::~SuffixTrie()
 {
-    delete this->root;
+    DestroyRecursive(root);
     delete this->longest;
+}
+
+bool SuffixTrie::empty() const
+{
+    return this->root->get_children().empty();
+}
+
+const SuffixTrie& SuffixTrie::operator=(const SuffixTrie& rightHandSide)
+{
+    /*
+    if (this != &rightHandSide)
+    {
+        this->~SuffixTrie();
+
+        this->root = rightHandSide.root;
+        this->longest = rightHandSide.longest;
+        this->build_suffix_trie(rightHandSide.longest->get_path());
+    }
+    */
+    return *this;
 }
 
 SuffixNode* SuffixTrie::get_trie_root()
@@ -38,25 +88,25 @@ SuffixNode* SuffixTrie::get_deepest_leaf()
 void SuffixTrie::build_suffix_trie(string s)
 {
     int len = s.length();
-    if (len <= 1)
+    
+    if (len <= 1) // check validity of string
     {
         std::cout << "input string is empty\n";
         return;
     }
 
-    // add s[0] to root
-    this->root->add_link(s.substr(0, 1), this->longest);
-    this->longest->set_path(s.substr(0, 1));
+    this->root->add_link(s.substr(0, 1), this->longest); // add first character to root
+    this->longest->set_path(s.substr(0, 1)); //set suffix of longest to the first character
 
     // append the rest of characters
     for (int i = 1; i < len; i++)
     {
         SuffixNode* current = this->longest;
-        SuffixNode* pre = NULL;
+        SuffixNode* previous = NULL;
 
         string currentChar = s.substr(i, 1);
 
-        // not root and s[i] not in node's children
+        // as long as the current character does not already exist...
         while (current && !current->has_string(currentChar))
         {
             SuffixNode* new_node = new SuffixNode();
@@ -64,21 +114,21 @@ void SuffixTrie::build_suffix_trie(string s)
             new_node->set_path(current->get_path() + currentChar);
 
 
-            if (pre != NULL)
-                pre->set_suffix_link(new_node);
+            if (previous != NULL)
+                previous->set_suffix_link(new_node);
 
-            pre = new_node;
+            previous = new_node;
             current = current->get_suffix_link();
         }
 
-        // set the last suffix node link
-        if (current == NULL)
-            pre->set_suffix_link(this->root);
+        // Link new nodes to parents
+        if (current == NULL) 
+            previous->set_suffix_link(this->root); // link unique character to root node
         else
-            pre->set_suffix_link(current->get_child(currentChar));
+            previous->set_suffix_link(current->get_child(currentChar)); // link new suffix to repeated character
 
         if (currentChar != TERMINAL)
-            this->longest = this->longest->get_child(currentChar);
+            this->longest = this->longest->get_child(currentChar); // set longest to point to the entire string (NO TERMINAL)
     }
 }
 
@@ -173,7 +223,8 @@ string SuffixTrie::lexico_first_suffix()
         std::map<string, SuffixNode*>::iterator iter;
         map<string, SuffixNode*> m = head->get_children();
 
-        for (iter = m.begin(); iter != m.end(); iter++) {
+        for (iter = m.begin(); iter != m.end(); iter++) 
+        {
             string child_edge = iter->first;
             if (child_edge != TERMINAL &&
                 (min == "" || child_edge.compare(min) < 0))
@@ -189,8 +240,38 @@ string SuffixTrie::lexico_first_suffix()
 
 void SuffixTrie::displayTree(ostream& out) const
 {
-    function<void(SuffixNode* n, string last)> output;
-    output = [&](SuffixNode* n, string last)
+    /*----------------------------------------------------------------------
+     Given that the process of displaying a tree is a recursive one, it has
+     to be done using a recursive function. The main display function can't
+     and should NOT be used recursively. 
+     The display function should call the function that defines the process 
+     of outputting the tree and it will automatically output it.
+     This will result in another issue where the output stream is not the
+     same as the one given by the display function.
+
+     Hence the use of this method. We define a functional object inside of
+     the display function so that it would be able to use the parameters of
+     the display function and perform its recursive operation as flawlessly.
+     -----------------------------------------------------------------------*/
+
+    function<void(SuffixNode* n, string last)> visualize;
+    visualize = [&](SuffixNode* n, string last)
+    {
+        map<string, SuffixNode*> childrenMap = n->get_children();
+        string children = "";
+
+        if (children.empty())
+        {
+            out << "- " << n->get_path() << '\n';
+            return;
+        }
+        out << "+ " << n->get_path() << '\n';
+
+    };
+
+    //definition of output process
+    function<void(SuffixNode* n, string last)> tableOutput;
+    tableOutput = [&](SuffixNode* n, string last)
     {
         map<string, SuffixNode*> childrenMap = n->get_children();
         string children = "";
@@ -214,11 +295,13 @@ void SuffixTrie::displayTree(ostream& out) const
         {
             string s = iter->first;
             SuffixNode* sn = iter->second;
-            output(sn, s);
+            tableOutput(sn, s);
         }
-    };
+    }; // end of definition of output process
 
-    output(root, "");
+    tableOutput(root, "");
+    out << endl;
+    visualize(root, "");
 }
 
 void SuffixTrie::displaySuffix(ostream& out) const

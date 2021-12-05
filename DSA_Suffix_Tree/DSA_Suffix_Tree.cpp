@@ -2,12 +2,11 @@
 #include "SuffixTrie.h"
 using namespace std;
 
-void output_suffix(SuffixNode* longest); //output all the suffix via the deepest node
-void test_substring(SuffixTrie* trie, string s, string q);
-void test_suffix(SuffixTrie* trie, string s, string q);
-void test_occurrence(SuffixTrie* trie, string s, string q);
-void test_longest_repeat(SuffixTrie* trie, string s);
-void test_lexico_first_suffix(SuffixTrie* trie, string s);
+void test_substring(SuffixTrie& trie, string s, string q);
+void test_suffix(SuffixTrie& trie, string s, string q);
+void test_occurrence(SuffixTrie& trie, string s, string q);
+void test_longest_repeat(SuffixTrie& trie, string s);
+void test_lexico_first_suffix(SuffixTrie& trie, string s);
 
 int main(int argc, char* argv[])
 {
@@ -15,17 +14,12 @@ int main(int argc, char* argv[])
     string q;
 
     cout << "Enter string: "; cin >> s;
-
-    SuffixTrie* trie = new SuffixTrie();
-    trie->build_suffix_trie(s + TERMINAL);
-
-    SuffixNode* root = trie->get_trie_root();
-    SuffixNode* longest = trie->get_deepest_leaf();
+    SuffixTrie trie(s);
 
     cout << "\nprint trie stucture\n";
-    trie->displayTree(cout);
+    trie.displayTree(cout);
     cout << "\nprint suffix link\n";
-    trie->displaySuffix(cout);
+    trie.displaySuffix(cout);
 
     cout << "\nEnter another string: "; cin >> q;
 
@@ -38,38 +32,38 @@ int main(int argc, char* argv[])
 }
 
 /***** test basic applications *****/
-void test_substring(SuffixTrie* trie, string s, string q)
+void test_substring(SuffixTrie& trie, string s, string q)
 {
-    if (trie->has_substring(q))
+    if (trie.has_substring(q))
         cout << q << " is a substring of " << s << endl;
     else
         cout << q << " is not a substring of " << s << endl;
 }
 
-void test_suffix(SuffixTrie* trie, string s, string q)
+void test_suffix(SuffixTrie& trie, string s, string q)
 {
-    if (trie->has_suffix(q))
+    if (trie.has_suffix(q))
         cout << q << " is a suffix of " << s << endl;
     else
         cout << q << " is not a suffix of " << s << endl;
 }
 
-void test_occurrence(SuffixTrie* trie, string s, string q)
+void test_occurrence(SuffixTrie& trie, string s, string q)
 {
-    cout << q << " occurs " << trie->numberOf(q) << " time(s) in " << s << endl;
+    cout << q << " occurs " << trie.numberOf(q) << " time(s) in " << s << endl;
 }
 
-void test_longest_repeat(SuffixTrie* trie, string s)
+void test_longest_repeat(SuffixTrie& trie, string s)
 {
-    string repeat = trie->longest_repeat();
+    string repeat = trie.longest_repeat();
     if (repeat == "")
         cout << "There is no repeat substring in " << s << endl;
     else
         cout << repeat << " is the longest repeat substring in " << s << endl;
 }
 
-void test_lexico_first_suffix(SuffixTrie* trie, string s)
+void test_lexico_first_suffix(SuffixTrie& trie, string s)
 {
-    string lexico_1 = trie->lexico_first_suffix();
+    string lexico_1 = trie.lexico_first_suffix();
     cout << lexico_1 << " is the first suffix of " << s << " by alphabetical order\n";
 }

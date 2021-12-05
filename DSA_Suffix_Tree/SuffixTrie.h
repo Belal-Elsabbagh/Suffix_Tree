@@ -17,8 +17,36 @@ private:
 
 public:
     SuffixTrie();
+    SuffixTrie(string s);
+    /***** Copy constructor *****/
+    SuffixTrie(const SuffixTrie& original);
+    /*----------------------------------------------------------------------
+     Construct a copy of a List object.
 
+     Precondition:  A copy of origList is needed; origList is a const
+     reference parameter.
+     Postcondition: A copy of origList has been constructed.
+     -----------------------------------------------------------------------*/
+    
+    void DestroyRecursive(SuffixNode* node);
     ~SuffixTrie();
+
+     /***** Assignment operator *****/
+    const SuffixTrie& operator=(const SuffixTrie& rightHandSide);
+    /*----------------------------------------------------------------------
+     Assign a copy of a List object to the current object.
+
+     Precondition: none
+     Postcondition: A copy of rightHandSide has been assigned to this
+     object. A const reference to this list is returned.
+     -----------------------------------------------------------------------*/
+
+    bool empty() const;
+    /*------------------------------------------------------------------------
+     Check if the trie is empty.
+     Precondition: None
+     Postcondition: Returns true if trie is empty and false otherwise.
+     -----------------------------------------------------------------------*/
 
     SuffixNode* get_trie_root();
 
@@ -67,3 +95,5 @@ public:
 };
 
 #endif
+
+void DestroyRecursive(SuffixNode* node);
