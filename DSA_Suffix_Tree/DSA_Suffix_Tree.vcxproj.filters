@@ -18,12 +18,18 @@
     <ClCompile Include="DSA_Suffix_Tree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SuffixTree.cpp">
+    <ClCompile Include="SuffixNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SuffixTrie.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SuffixTree.h">
+    <ClInclude Include="SuffixNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SuffixTrie.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
