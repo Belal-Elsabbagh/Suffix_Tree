@@ -1,12 +1,12 @@
 #include "SuffixNode.h"
 
-inline SuffixNode::SuffixNode(SuffixNode* n)
+SuffixNode::SuffixNode(SuffixNode* n)
 {
     this->suffix_link = n;
     this->path = "";
 }
 
-inline SuffixNode::~SuffixNode()
+SuffixNode::~SuffixNode()
 {
     path = "";
     delete this->suffix_link;
@@ -20,14 +20,14 @@ inline SuffixNode::~SuffixNode()
 
 // link node to SuffixNode by child
 
-inline void SuffixNode::add_link(string child, SuffixNode* node)
+void SuffixNode::add_link(string child, SuffixNode* node)
 {
     this->children[child] = node;
 }
 
 // search child
 
-inline bool SuffixNode::has_string(string child)
+bool SuffixNode::has_string(string child)
 {
     return this->children.find(child) != this->children.end();
 }
