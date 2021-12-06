@@ -1,5 +1,6 @@
 #include "SuffixTrie.h"
 #include <functional>
+#include <iomanip>
 
 /*
  *  Followings are basic applicaitons of suffix trie
@@ -21,6 +22,8 @@ SuffixTrie::SuffixTrie()
 
 SuffixTrie::SuffixTrie(string s)
 {
+    this->root = new SuffixNode();
+    this->longest = new SuffixNode(this->root);
     build_suffix_trie(s + TERMINAL);
 }
 
@@ -254,21 +257,6 @@ void SuffixTrie::displayTree(ostream& out) const
      the display function and perform its recursive operation as flawlessly.
      -----------------------------------------------------------------------*/
 
-    function<void(SuffixNode* n, string last)> visualize;
-    visualize = [&](SuffixNode* n, string last)
-    {
-        map<string, SuffixNode*> childrenMap = n->get_children();
-        string children = "";
-
-        if (children.empty())
-        {
-            out << "- " << n->get_path() << '\n';
-            return;
-        }
-        out << "+ " << n->get_path() << '\n';
-
-    };
-
     //definition of output process
     function<void(SuffixNode* n, string last)> tableOutput;
     tableOutput = [&](SuffixNode* n, string last)
@@ -283,7 +271,7 @@ void SuffixTrie::displayTree(ostream& out) const
         }
 
         string parent = n->get_suffix_link() ? last : "root";
-        out << parent << " in " << n->get_path()
+        out << parent << " \tin " << n->get_path()
             << "\thas child: " << children
             << "\tsuffix link: ";
         if (parent != "root")
@@ -301,7 +289,6 @@ void SuffixTrie::displayTree(ostream& out) const
 
     tableOutput(root, "");
     out << endl;
-    visualize(root, "");
 }
 
 void SuffixTrie::displaySuffix(ostream& out) const
