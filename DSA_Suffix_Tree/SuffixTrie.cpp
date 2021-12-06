@@ -20,42 +20,31 @@ SuffixTrie::SuffixTrie()
     this->longest = new SuffixNode(this->root);
 }
 
-SuffixTrie::SuffixTrie(string s)
+SuffixTrie::SuffixTrie(const string& s)
 {
     this->root = new SuffixNode();
     this->longest = new SuffixNode(this->root);
-    build_suffix_trie(s + TERMINAL);
+    build_suffix_trie(s);
 }
 
 SuffixTrie::SuffixTrie(const SuffixTrie& original)
 {
-    //this->build_suffix_trie(original.longest->get_path());
+    this->root = new SuffixNode();
+    this->longest = new SuffixNode(this->root);
+    build_suffix_trie(original.longest->get_path());
 }
 
-void SuffixTrie::DestroyRecursive(SuffixNode* node)
+const SuffixTrie& SuffixTrie::operator=(const SuffixTrie& rightHandSide)
 {
-    map<string, SuffixNode*> m = node->get_children();
-    if (node != nullptr)
-    {
-        if (m.empty())
-        {
-            // delete the leaf node
-            delete(node);
-            return;
-        }
-        
-        std::map<string, SuffixNode*>::iterator iter;
-        for (iter = m.begin(); iter != m.end(); iter++)
-        {
-            DestroyRecursive(iter->second);
-        }
-    }
+    build_suffix_trie(rightHandSide.longest->get_path());
+
+    return *this;
 }
 
 SuffixTrie::~SuffixTrie()
 {
-    DestroyRecursive(root);
-    delete this->longest;
+    delete root;
+    delete longest;
 }
 
 bool SuffixTrie::empty() const
@@ -63,33 +52,9 @@ bool SuffixTrie::empty() const
     return this->root->get_children().empty();
 }
 
-const SuffixTrie& SuffixTrie::operator=(const SuffixTrie& rightHandSide)
-{
-    /*
-    if (this != &rightHandSide)
-    {
-        this->~SuffixTrie();
-
-        this->root = rightHandSide.root;
-        this->longest = rightHandSide.longest;
-        this->build_suffix_trie(rightHandSide.longest->get_path());
-    }
-    */
-    return *this;
-}
-
-SuffixNode* SuffixTrie::get_trie_root()
-{
-    return this->root;
-}
-
-SuffixNode* SuffixTrie::get_deepest_leaf()
-{
-    return this->longest;
-}
-
 void SuffixTrie::build_suffix_trie(string s)
 {
+    s += TERMINAL;
     int len = s.length();
     
     if (len <= 1) // check validity of string
@@ -135,78 +100,93 @@ void SuffixTrie::build_suffix_trie(string s)
     }
 }
 
-bool SuffixTrie::has_substring(string s)
+bool SuffixTrie::has_substring(const string& s) const
 {
-    SuffixNode* head = this->root;
+    SuffixNode* head = this->root; // points to the root of the tree
 
-    for (int i = 0; i < s.length(); i++) {
-        SuffixNode* child = head->get_child(s.substr(i, 1));
-        if (child)
-            head = child;
+    for (int i = 0; i < s.length(); i++) // iterates through the char of the substring
+    {
+        SuffixNode* child = head->get_child(s.substr(i, 1)); // points to the child node with the char of the substring
+        if (child) // if child != NULL
+            head = child; // point the head to this child - move to the next char (this child)
         else
-            return false;
+            return false; // couldn't find a child, which means that this next letter does not exist
+                          // which means that string s is DEFINITELY NOT a substring of the original string
     }
-
+    
+    // after passing the validation loop...
     return true;
-}
+} 
 
-bool SuffixTrie::has_suffix(string s)
+bool SuffixTrie::has_suffix(const string& s) const
 {
-    SuffixNode* head = this->root;
+    SuffixNode* head = this->root; // points to the root of the tree
 
-    for (int i = 0; i < s.length(); i++) {
-        SuffixNode* child = head->get_child(s.substr(i, 1));
-        if (child)
-            head = child;
-        else
-            return false;
+    for (int i = 0; i < s.length(); i++) // iterates through the char of the substring
+    {
+        SuffixNode* child = head->get_child(s.substr(i, 1)); // points to the child node with the char of the suffix
+        if (child) // if child != NULL
+            head = child; // point the head to this child - move to the next char (this child)
+        
+        else              // couldn't find a child, which means that this next letter does not exist
+            return false; // which means that string s is DEFINITELY NOT a suffix of the original string
     }
+    
 
-    if (head->get_child(TERMINAL))
+    if (head->get_child(TERMINAL)) // if the head has reached the parent of TERMINAL
         return true;
     return false;
 }
 
-int SuffixTrie::numberOf(string s)
+int SuffixTrie::numberOfOccurences(string s)
 {
-    SuffixNode* head = this->root;
+    SuffixNode* head = this->root; // points to the root of the tree
 
-    for (int i = 0; i < s.length(); i++) {
-        SuffixNode* child = head->get_child(s.substr(i, 1));
-        if (child)
-            head = child;
+    for (int i = 0; i < s.length(); i++) // iterates through the char of the substring
+    {
+        SuffixNode* child = head->get_child(s.substr(i, 1)); // points to the child node with the char of the substring
+        if (child) // if child != NULL
+            head = child; // point the head to this child - move to the next char (this child)
         else
             return 0;
     }
 
     int count = 0;
+    
     // count number of leaves, use BFS algorithm
     queue<SuffixNode*> q;
     q.push(head);
-    while (!q.empty()) {
+    while (!q.empty()) 
+    {
         SuffixNode* node = q.front();
-        q.pop();
+        q.pop(); // empties the queue (there was only 1 element anyway)
 
-        map<string, SuffixNode*> m = node->get_children();
-        if (m.size() == 0) {
+        map<string, SuffixNode*> nodeChildren = node->get_children();
+        
+        if (nodeChildren.size() == 0) 
+        {
             count++;
             continue;
         }
 
-        std::map<string, SuffixNode*>::iterator iter;
-        for (iter = m.begin(); iter != m.end(); iter++) {
+        map<string, SuffixNode*>::iterator iter;
+        for (iter = nodeChildren.begin(); iter != nodeChildren.end(); iter++) 
+        {
             q.push(iter->second);
         }
     }
     return count;
 }
 
-string SuffixTrie::longest_repeat()
+string SuffixTrie::longestRepeatedSubstring()
 {
+    // We will move up the longest path towards the root node.
     SuffixNode* tail = this->longest;
-    while (tail) {
-        if (tail->get_children().size() > 1)
-            return tail->get_path();
+
+    while (tail) // as long as the tail is not null
+    {
+        if (tail->get_children().size() > 1) // if the node has more than 1 child
+            return tail->get_path(); // this means that this node has the longest repeated substring.
         tail = tail->get_suffix_link();
     }
     return "";

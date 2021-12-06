@@ -6,16 +6,26 @@ SuffixNode::SuffixNode(SuffixNode* n)
     this->path = "";
 }
 
+SuffixNode::SuffixNode(const SuffixNode* original)
+{
+    this->path = original->path;
+    this->suffix_link = original->suffix_link;
+
+    this->children = original->children;
+    
+    std::map<string, SuffixNode*>::iterator it;
+    map<string, SuffixNode*> m = original->children;
+    
+    while (it != original->children.end())
+    {
+        children[it->first] = new SuffixNode(*(it->second));
+        ++it;
+    }
+}
+
 SuffixNode::~SuffixNode()
 {
-    path = "";
-    delete this->suffix_link;
 
-    for (std::map<string, SuffixNode*>::iterator iter = this->children.begin(); iter != this->children.end(); ++iter)
-    {
-        delete iter->second;
-    }
-    this->children.clear();
 }
 
 // link node to SuffixNode by child
