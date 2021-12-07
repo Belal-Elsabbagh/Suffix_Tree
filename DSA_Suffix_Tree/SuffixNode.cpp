@@ -25,7 +25,7 @@ SuffixNode::SuffixNode(const SuffixNode* original)
 
 SuffixNode::~SuffixNode()
 {
-
+    delete suffix_link;
 }
 
 // link node to SuffixNode by child

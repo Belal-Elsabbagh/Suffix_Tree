@@ -6,7 +6,6 @@ void test_substring(SuffixTrie& trie, string s, string q);
 void test_suffix(SuffixTrie& trie, string s, string q);
 void test_occurrence(SuffixTrie& trie, string s, string q);
 void test_longest_repeat(SuffixTrie& trie, string s);
-void test_lexico_first_suffix(SuffixTrie& trie, string s);
 
 int main(int argc, char* argv[])
 {
@@ -14,12 +13,12 @@ int main(int argc, char* argv[])
     string q;
 
     cout << "Enter string: "; cin >> s;
-    SuffixTrie temp(s);
-    SuffixTrie trie(temp);
+    SuffixTrie temp(s); // testing string constructor
+    SuffixTrie trie = temp; // testing copy constructor & assignment operator
     cout << "\nprint trie stucture\n";
-    trie.displayTree(cout);
+    trie.displayTree(cout); // display the table of nodes in tree
     cout << "\nprint suffix link\n";
-    trie.displaySuffix(cout);
+    trie.displaySuffixLink(cout); // display the suffixes of the string
 
     cout << "\nEnter another string: "; cin >> q;
 
@@ -28,7 +27,6 @@ int main(int argc, char* argv[])
     test_suffix(trie, s, q);
     test_occurrence(trie, s, q);
     test_longest_repeat(trie, s);
-    test_lexico_first_suffix(trie, s);
 }
 
 /***** test basic applications *****/
@@ -60,10 +58,4 @@ void test_longest_repeat(SuffixTrie& trie, string s)
         cout << "There is no repeat substring in " << s << endl;
     else
         cout << repeat << " is the longest repeat substring in " << s << endl;
-}
-
-void test_lexico_first_suffix(SuffixTrie& trie, string s)
-{
-    string lexico_1 = trie.lexico_first_suffix();
-    cout << lexico_1 << " is the first suffix of " << s << " by alphabetical order\n";
 }

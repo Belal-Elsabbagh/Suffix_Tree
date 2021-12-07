@@ -25,7 +25,7 @@ private:
      ----------------------------------------------------------------------*/
     map<string, SuffixNode*> children;
     string path; // substring from root to current node
-    SuffixNode* suffix_link;
+    SuffixNode* suffix_link; // points to the next suffix
 
 public:
     SuffixNode(SuffixNode* n = NULL);

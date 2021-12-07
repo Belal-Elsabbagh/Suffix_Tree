@@ -119,8 +119,6 @@ public:
      string.
      -----------------------------------------------------------------------*/
 
-    string lexico_first_suffix();
-
     /***** output *****/
     void displayTree(ostream& out) const;
     /*----------------------------------------------------------------------
@@ -131,7 +129,7 @@ public:
      has been inserted into out.
      -----------------------------------------------------------------------*/
 
-    void displaySuffix(ostream& out) const;
+    void displaySuffixLink(ostream& out) const;
     /*----------------------------------------------------------------------
      Display the suffixes in the trie.
 
